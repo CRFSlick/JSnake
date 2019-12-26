@@ -8,19 +8,18 @@ ARROW_UP = 38;
 ARROW_RIGHT = 39;
 ARROW_DOWN = 40;
 
-game = null;
-food = null;
-board = null;
-snake = null;
-snakeStartLen = 3;
-keypressQueue = [];
+GAME = null;
+FOOD = null;
+BOARD = null;
+SNAKE = null;
+SNAKESTARTLEN = 3;
+KEYPRESSQUEUE = [];
 
 var fps = 10;
 var rows = 20;
 var columns = 20;
-var canvas = document.getElementById('canvas')
+var canvas = document.getElementById('canvas');
 var square_side = Math.sqrt((canvas.width * canvas.height) / (rows * columns));
-
 
 document.addEventListener('keydown', setKeyCode);
 
@@ -35,15 +34,15 @@ class Snake {
     update(board) {
         if (board.grid[this.x]) {
             if (board.grid[this.x][this.y]) {
-                var tile = board.grid[this.x][this.y]
-                if (tile.isSnake && snake.direction) {lose()}
+                var tile = board.grid[this.x][this.y];
+                if (tile.isSnake && SNAKE.direction) {lose();}
                 else if (!tile.isSnake && tile.isFood) {
-                    food = false;
-                    snake.length += 1;
-                    board.grid[this.x][this.y].setSnake()
+                    FOOD = false;
+                    SNAKE.length += 1;
+                    board.grid[this.x][this.y].setSnake();
                 }
                 else if (!tile.isSnake) {
-                    board.grid[this.x][this.y].setSnake()
+                    board.grid[this.x][this.y].setSnake();
                 }
             } else {lose();}
         } else {lose();}
@@ -55,7 +54,7 @@ class Board {
         this.grid = {};
         this.row = row;
         this.col = col;
-        this.generateBoard()
+        this.generateBoard();
     }
 
     generateBoard() {
@@ -102,7 +101,7 @@ class Tile {
 }
 
 function setKeyCode(e) {
-    keypressQueue.push(e.which);
+    KEYPRESSQUEUE.push(e.which);
 }
 
 function fillBlock(row, column, color) {
@@ -116,27 +115,27 @@ function clearBlock(row, column) {
 }
 
 function clearBoard() {
-    Object.keys(board.grid).forEach(row => {
-        Object.keys(board.grid[row]).forEach(col => {
-            tile = board.grid[row][col];
+    Object.keys(BOARD.grid).forEach(row => {
+        Object.keys(BOARD.grid[row]).forEach(col => {
+            tile = BOARD.grid[row][col];
             tile.setEmpty();
         });
     });
 }
 
 function updateBoard() {
-    Object.keys(board.grid).forEach(row => {
-        Object.keys(board.grid[row]).forEach(col => {
-            tile = board.grid[row][col];
+    Object.keys(BOARD.grid).forEach(row => {
+        Object.keys(BOARD.grid[row]).forEach(col => {
+            tile = BOARD.grid[row][col];
 
-            if (!food) {
+            if (!FOOD) {
                 spawnFood();
             }
             if (tile.duration != null) {
                 tile.duration += 1;
             }
             if (tile.isSnake) {
-                if (tile.duration > (snake.length)) { tile.setEmpty(); }
+                if (tile.duration > (SNAKE.length)) { tile.setEmpty(); }
             }
 
             if (tile.isEmpty && !tile.isSnake && !tile.isFood) { fillBlock(row, col, 'black'); }
@@ -153,65 +152,35 @@ function updateBoard() {
 
 function updateSnake(e) {
 
-    var tmp_x = snake.x;
-    var tmp_y = snake.y;
-
-    if (keypressQueue) {
-        var keycode = keypressQueue[0];
-        keypressQueue = [];
-
-        
-        // if (keypressQueue.length == 1) {
-        //     var keycode = keypressQueue[0];
-        //     keypressQueue = [];
-
-        //     if (keycode == KEY_W || keycode == ARROW_UP) {
-        //         if (snake.direction != 'N' && snake.direction != 'S') {
-        //             snake.direction = 'N';
-        //         }
-        //     } else if (keycode == KEY_S || keycode == ARROW_DOWN) {
-        //         if (snake.direction != 'S' && snake.direction != 'N') {
-        //             snake.direction = 'S';
-        //         }
-        //     } else if (keycode == KEY_A || keycode == ARROW_LEFT) {
-        //         if (snake.direction != 'E' && snake.direction != 'W') {
-        //             snake.direction = 'E';
-        //         }
-        //     } else if (keycode == KEY_D || keycode == ARROW_RIGHT) {
-        //         if (snake.direction != 'W' && snake.direction != 'E') {
-        //             snake.direction = 'W';
-        //         }
-        //     }
-        // } else if (keypressQueue > 1) {
-        //     var keycode1 = keypressQueue[0];
-        //     var keycode2 = keypressQueue[1];
-        // }
+    if (KEYPRESSQUEUE) {
+        var keycode = KEYPRESSQUEUE[0];
+        KEYPRESSQUEUE = [];
 
         if (keycode == KEY_W || keycode == ARROW_UP) {
-            if (snake.direction != 'N' && snake.direction != 'S') {
-                snake.direction = 'N';
+            if (SNAKE.direction != 'N' && SNAKE.direction != 'S') {
+                SNAKE.direction = 'N';
             }
         } else if (keycode == KEY_S || keycode == ARROW_DOWN) {
-            if (snake.direction != 'S' && snake.direction != 'N') {
-                snake.direction = 'S';
+            if (SNAKE.direction != 'S' && SNAKE.direction != 'N') {
+                SNAKE.direction = 'S';
             }
         } else if (keycode == KEY_A || keycode == ARROW_LEFT) {
-            if (snake.direction != 'E' && snake.direction != 'W') {
-                snake.direction = 'E';
+            if (SNAKE.direction != 'E' && SNAKE.direction != 'W') {
+                SNAKE.direction = 'E';
             }
         } else if (keycode == KEY_D || keycode == ARROW_RIGHT) {
-            if (snake.direction != 'W' && snake.direction != 'E') {
-                snake.direction = 'W';
+            if (SNAKE.direction != 'W' && SNAKE.direction != 'E') {
+                SNAKE.direction = 'W';
             }
         }
     }
 
-    if (snake.direction == 'N') { snake.y -= 1; }
-    if (snake.direction == 'S') { snake.y += 1; }
-    if (snake.direction == 'E') { snake.x -= 1; }
-    if (snake.direction == 'W') { snake.x += 1; }
+    if (SNAKE.direction == 'N') { SNAKE.y -= 1; }
+    if (SNAKE.direction == 'S') { SNAKE.y += 1; }
+    if (SNAKE.direction == 'E') { SNAKE.x -= 1; }
+    if (SNAKE.direction == 'W') { SNAKE.x += 1; }
 
-    snake.update(board);
+    SNAKE.update(BOARD);
 }
 
 function getRandomInt(min, max) {
@@ -221,54 +190,52 @@ function getRandomInt(min, max) {
 }
 
 function spawnFood() {
-    var possibleFootTiles = []
+    var possibleFootTiles = [];
 
-    Object.keys(board.grid).forEach(row => {
-        Object.keys(board.grid[row]).forEach(col => {
-            tile = board.grid[row][col];
+    Object.keys(BOARD.grid).forEach(row => {
+        Object.keys(BOARD.grid[row]).forEach(col => {
+            tile = BOARD.grid[row][col];
             if (tile.isEmpty && !tile.isSnake && !tile.isFood) {
-                possibleFootTiles.push(tile)
+                possibleFootTiles.push(tile);
             }
         });
     });
 
     if (possibleFootTiles.length != 0) {
-        console.log(possibleFootTiles);
         var chosenTile = possibleFootTiles[Math.floor(Math.random() * possibleFootTiles.length)];
         if (!chosenTile.isEmpty) {
             alert("ERROR");
         }
         chosenTile.setFood();
-        food = true;
-    } else { win() }
+        FOOD = true;
+    } else {win();}
 }
 
 function win() {
     alert('You won! Congrats!');
-    clearInterval(game);
+    clearInterval(GAME);
     clearBoard();
     main();
 }
 
-function lose(name) {
-    console.log(name);
+function lose() {
     alert('You lose!');
-    clearInterval(game);
+    clearInterval(GAME);
     clearBoard();
     main();
 }
 
 function error() {
     alert('An unexpected error occurred :(');
-    clearInterval(game);
+    clearInterval(GAME);
     clearBoard();
     main();
 }
 
 function forceWin() {
-    Object.keys(board.grid).forEach(row => {
-        Object.keys(board.grid[row]).forEach(col => {
-            tile = board.grid[row][col];
+    Object.keys(BOARD.grid).forEach(row => {
+        Object.keys(BOARD.grid[row]).forEach(col => {
+            tile = BOARD.grid[row][col];
             tile.setSnake();
         });
     });
@@ -280,17 +247,17 @@ function gameLoop() {
 }
 
 async function main() {
-    snake = new Snake(snakeStartLen);
+    SNAKE = new Snake(SNAKESTARTLEN);
 
     if (typeof (canvas.getContext) !== undefined) {
         cx = canvas.getContext('2d');
-        snake.x = 0;
-        snake.y = 0;
-        snake.direction = 'W';
+        SNAKE.x = 0;
+        SNAKE.y = 0;
+        SNAKE.direction = 'W';
     }
 
     // Wait for keypress before starting
-    board = new Board(rows, columns);
+    BOARD = new Board(rows, columns);
 
     spawnFood();
     updateSnake();
@@ -299,7 +266,7 @@ async function main() {
 
     (async function () {
         const x = await readKey();
-        game = setInterval(gameLoop, 1000 / fps);
+        GAME = setInterval(gameLoop, 1000 / fps);
     }());
 }
 
