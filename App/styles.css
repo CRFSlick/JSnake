@@ -1,3 +1,7 @@
+body {
+    background-color: rgb(0, 0, 0);
+}
+
 canvas {
     padding-left: 0;
     padding-right: 0;
@@ -7,6 +11,27 @@ canvas {
     width: 800px;
 }
 
-body {
-    background-color: rgb(0, 0, 0);
+.start-text {
+    position: absolute;
+    top: 200px;
+    left:0;
+    right:0;
+    margin-left:auto;
+    margin-right:auto;
+    text-align: center;
+    color: white;
+    font-weight: bolder;
+    font-size: 2em;
+}
+
+span.win {
+    color: rgb(0, 199, 0);
+}
+
+span.loss {
+    color: rgb(255, 0, 0);
+}
+
+span.error {
+    color: rgb(255, 0, 0);
 }

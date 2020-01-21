@@ -212,39 +212,59 @@ function spawnFood() {
 }
 
 function win() {
-    alert('You won! Congrats!');
-    clearInterval(GAME);
-    clearBoard();
-    main();
+    endGame('win', 'You won! Congrats!');
 }
 
 function lose() {
-    alert('You lose!');
-    clearInterval(GAME);
-    clearBoard();
-    main();
+    endGame('loss', 'You lose!');
 }
 
 function error() {
-    alert('An unexpected error occurred :(');
-    clearInterval(GAME);
-    clearBoard();
-    main();
+    endGame('error', 'An unexpected error occurred :(');
 }
 
-function forceWin() {
-    Object.keys(BOARD.grid).forEach(row => {
-        Object.keys(BOARD.grid[row]).forEach(col => {
-            tile = BOARD.grid[row][col];
-            tile.setSnake();
-        });
-    });
+async function endGame(type, msg) {
+    let sleep_time;
+    let sub = 'Press any key to try again!'
+
+    if (type == 'loss') {
+        sleep_time = 1000;
+    } else {
+        sleep_time = 3000;
+    }
+
+    msg = `<span class="${type}">${msg}</span><br>${sub}`
+
+    clearInterval(GAME);
+    showSpashText(msg);
+
+    const readKey = () => new Promise(resolve => window.addEventListener('keydown', resolve, { once: true }));
+    (async function () {
+        const x = await readKey();
+        hideSpashText();
+        clearBoard();
+        window.location.reload(false);
+    }());
 }
 
 function gameLoop() {
     updateSnake();
     updateBoard();
 }
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function showSpashText(text) {
+    document.getElementById('start-text').style.display = 'block';
+    document.getElementById('start-text').innerHTML = text;
+}
+
+function hideSpashText() {
+    document.getElementById('start-text').style.display = 'none';
+}
+
 
 async function main() {
     SNAKE = new Snake(SNAKESTARTLEN);
@@ -256,16 +276,19 @@ async function main() {
         SNAKE.direction = 'W';
     }
 
-    // Wait for keypress before starting
     BOARD = new Board(rows, columns);
 
     spawnFood();
     updateSnake();
     updateBoard();
-    const readKey = () => new Promise(resolve => window.addEventListener('keydown', resolve, { once: true }));
 
+    showSpashText('Press any key to start!');
+
+    // Wait for keypress before starting
+    const readKey = () => new Promise(resolve => window.addEventListener('keydown', resolve, { once: true }));
     (async function () {
         const x = await readKey();
+        hideSpashText();
         GAME = setInterval(gameLoop, 1000 / fps);
     }());
 }
