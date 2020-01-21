@@ -262,7 +262,7 @@ async function main() {
     spawnFood();
     updateSnake();
     updateBoard();
-    const readKey = () => new Promise(resolve => window.addEventListener('keypress', resolve, { once: true }));
+    const readKey = () => new Promise(resolve => window.addEventListener('keydown', resolve, { once: true }));
 
     (async function () {
         const x = await readKey();
